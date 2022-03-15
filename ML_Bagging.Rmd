@@ -1,0 +1,95 @@
+---
+title: "ML_Bagging_in_R"
+author: "Juliano Sarnes Longo"
+date: "12/03/2022"
+output:
+  pdf_document: default
+  word_document: default
+  html_document:
+    df_print: paged
+---
+
+## ML Bagging em R
+
+### Introdução
+Quando construímos uma *árvore de decisão* para tentar predizer algum resultado 
+utilizamos somente um único conjunto de dados para treinar o modelo, sendo assim, 
+existe uma certa desvantagem ao utilizar uma única árvore de decisão, o problema 
+é que ela tende a sofrer uma *alta variância* e por consequência tende a ter 
+um *baixo viés*.
+
+Se dividirmos o conjunto de dados em duas metades e aplicarmos a árvore de decisão 
+e aplicarmos a árvore de decisão nessas metades, os resultados podem ser bem 
+diferentes.
+
+Um método que pode ser utilizado para reduzir a variação de uma única árvore de 
+decisão é conhecido como **bagging** (ensacamento), também chamado de 
+**bootstrap aggregation**.
+
+### Entendo o funcionamento do bagging "ensacamento"
+
+1. Pegue *b* amostras de bootstrap do conjunto de dados original;
+2. Construia uma árvore de decisão para cada amostra bootstrap;
+3. Faça a média das previsões de cada árvore para chegar a um modelo final;
+
+Ao realizar as operações acima criaremos centenas ou até mesmo milhares de árvores 
+de decisão individuais e obteremos as previsões médias de todas as árvores, assim
+muitas vezes acabaremos com um modelo ensacado ajustado que produz uma taxa de erro 
+de teste muito menor em comparação com uma única árvore.
+
+### Criando o Bagging com R
+
+1. Bibliotecas do R para construção do Bagging.
+
+```{r}
+library(caret) # para construcao da árvore.
+library(e1071) # para calcular a importância da variável.
+library(rpart) # para ajustar árvores de decisão. 
+library(ipred) # para ajustar bagging.
+library(dplyr) # para aplicação de data wrangling
+```
+
+2. Analisando a o dataset Airquality.
+
+Para a construção desse mini projeto usarei o dataset **airquality** que já faz parte dos pacotes do R Studio, este conjunto de dados contém as medições da qualidade do ar feitas na cidade de New York em 153 dias.
+
+```{r}
+head(airquality)
+```
+
+O dataset airquality é composto por 153 observações e 6 variáveis, sendo que nossa variável resposta é **Ozone**.
+
+```{r}
+dim(airquality)
+```
+
+3. Criação do modelo ensacado "bagged".
+
+```{r}
+
+modeloEnsacado <- ipred::bagging(formula = Ozone ~ ., 
+                                data = airquality, 
+                                nbagg = 150,  # número de amostras bootstrap.
+                                coob = TRUE,  # indica se uma estimativa de taxa de erro fora do ensacamento (  
+                                                           # classificação incorreta,
+                                                           # erro quadrático médio ou 
+                                                           # pontuação de Brier) deve ser computada. 
+                                control = rpart.control(minsplit = 2, cp = 0) # hiperparâmetros.
+                                )
+
+modeloEnsacado
+```
+
+Observe que criamos o bagging com as seguintes definições:
+1. Usamos 150 amostras bootstrap para construir o modelo ensacado;
+2. Definimos o parâmetro coob como TRUE para obter o erro estimado fora do bagg.
+3. Hiperparêmtros:
+- minsplit = 2 informa ao modelo para exigir apenas 2 observações em um nó para dividir.
+- cp = 0 o parâmetro de complexidade. definido como 0 indica que não exigimos que o modelo seja capaz de melhorar o ajuste geral em qualquer valor para realizar uma divisão.
+
+## Conclusão:
+Por fim verificamos o modelo nos diz que a RMSE (Raiz quadrada do erro-médio) estimado fora do ensacamento 
+é de 17,772, ou seja, esta é a diferença média entre o valor previsto para o Ozone e o valor real 
+observado. 
+
+
