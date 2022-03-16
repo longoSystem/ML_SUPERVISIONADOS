@@ -63,9 +63,10 @@ Criando as bases treino **ds_iris_treino** e teste **ds_iris_teste**.
 dim(ds_iris)
 #[1] 150   8
 
-# Como preciso criar um dataset de treino 'ds_iris_treino' com 70% das observações existentes 
-# na base original e os 30% restantes usarei na base de teste 'ds_iris_teste' aplicarei a função
-# createDataPartition para criar as partições de treino e teste.
+# Como preciso criar um dataset de treino 'ds_iris_treino' com 70% das observações 
+# existentes na base original e os 30% restantes usarei na base de teste 'ds_iris_teste'
+# aplicarei a função createDataPartition para criar as partições de treino e teste.
+
 part = createDataPartition(1:dim(ds_iris)[1],p=.7)
 ds_iris_treino <- ds_iris[part$Resample1,]
 ds_iris_teste <- ds_iris[- part$Resample1,]
