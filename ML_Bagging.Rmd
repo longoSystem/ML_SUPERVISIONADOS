@@ -54,13 +54,19 @@ library(dplyr) # para aplicação de data wrangling
 Para a construção desse mini projeto usarei o dataset **airquality** que já faz parte dos pacotes do R Studio, este conjunto de dados contém as medições da qualidade do ar feitas na cidade de New York em 153 dias.
 
 ```{r}
-head(airquality)
+class(airquality)
+#head(airquality)
+
+# substitui NAs por 0.
+df_airquality <- data.frame(airquality) %>% replace(is.na(.), 0)
+head(df_airquality)
+
 ```
 
 O dataset airquality é composto por 153 observações e 6 variáveis, sendo que nossa variável resposta é **Ozone**.
 
 ```{r}
-dim(airquality)
+dim(df_airquality)
 ```
 
 3. Criação do modelo ensacado "bagged".
@@ -68,7 +74,7 @@ dim(airquality)
 ```{r}
 
 modeloEnsacado <- ipred::bagging(formula = Ozone ~ ., 
-                                data = airquality, 
+                                data = df_airquality, 
                                 nbagg = 150,  # número de amostras bootstrap.
                                 coob = TRUE,  # indica se uma estimativa de taxa de erro fora do ensacamento (  
                                                            # classificação incorreta,
@@ -87,9 +93,20 @@ Observe que criamos o bagging com as seguintes definições:
 - minsplit = 2 informa ao modelo para exigir apenas 2 observações em um nó para dividir.
 - cp = 0 o parâmetro de complexidade. definido como 0 indica que não exigimos que o modelo seja capaz de melhorar o ajuste geral em qualquer valor para realizar uma divisão.
 
+
 ## Conclusão:
-Por fim verificamos o modelo nos diz que a RMSE (Raiz quadrada do erro-médio) estimado fora do ensacamento 
-é de 17,772, ou seja, esta é a diferença média entre o valor previsto para o Ozone e o valor real 
-observado. 
+
+Analisando os resultados.
+
+Bagging regression trees with 150 bootstrap replications 
+
+Call: bagging.data.frame(formula = Ozone ~ ., data = df_airquality, 
+    nbagg = 150, coob = TRUE, control = rpart.control(minsplit = 2, 
+        cp = 0))
+
+Out-of-bag estimate of root mean squared error:  24.4453 
+
+
+Por fim verificamos o modelo nos diz que a RMSE (erro quadrático médio ou MSE) estimado fora do ensacamento é de 24.4453, ou seja, esta é a diferença média entre o valor previsto para o Ozone e o valor real observado.
 
 
