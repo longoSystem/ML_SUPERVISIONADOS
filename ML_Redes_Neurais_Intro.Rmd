@@ -10,12 +10,12 @@ pdf_document: default
 
 ## Redes Neurais Artificiais utilizando R
 
-Para esse projeto introdutório utilizarei dois pacotes do CRAN para desenvolver as redes neurais artifiais. O primeiro pacote que utilizarei é o **caret** que possui diversas funções para treinamento e plotagem de modelos de classificação e regressão, o segundo pacote que utilizarei é o **neuralnet**, esse pacote será usado para o treinamento da rede neural.
+Para esse projeto introdutório utilizarei dois pacotes do CRAN para desenvolver as redes neurais artificiais. O primeiro pacote que utilizarei é o **caret** que possui diversas funções para treinamento e plotagem de modelos de classificação e regressão, o segundo pacote que utilizarei é o **neuralnet**, esse pacote será usado para o treinamento da rede neural.
 
 
 ### Entendo o objetivo
 
-O objetivo é demonstrar o funcionamento das redes neurais e como aplicá-las em modelos clássicos de classificação e principalmente como saber percentual de acurária do modelo gerado usando uma matriz de confusão. Para esse mini projeto utilizei o dataset IRIS, que já faz parte dos pacotes do R Studio, a rede neural que será desenvolvida terá como objetivo conseguir classificar as três espécies da flor conhecida como "Iris".
+O objetivo é demonstrar o funcionamento das redes neurais e como aplicá-las em modelos clássicos de classificação e principalmente como saber o percentual de acurácia do modelo gerado usando uma matriz de confusão. Para esse mini projeto utilizei o dataset IRIS, que já faz parte dos pacotes do R Studio, a rede neural que será desenvolvida terá como objetivo conseguir classificar as três espécies da flor conhecida como "Iris".
 
 O dataset "Iris" foi criado a partir das características da flor Iris como descrito acima o objetivo é fazer a classificação "definir a classe ou rótulo" entre os três tipos que existem e que são: Setosa, Virginica e Versicolor.
 
@@ -73,7 +73,7 @@ ds_iris_teste <- ds_iris[- part$Resample1,]
 
 ```
 
-## Criando a Rede Neural Artifical ou simplesmente RNA.
+## Criando a Rede Neural Artificial ou simplesmente RNA.
 
 As redes neurais artificais de treino e teste serão criadas usando o pacote **neuralnet** conforme abaixo:
 
@@ -134,7 +134,7 @@ matriz_confusao
 
 A matriz de confusão acima indica que o modelo da Rede Neural Artificial teve 41 acertos, como  que nossa amostra de teste possui 44 observações chegamos em uma acurácia de 93,18%.
 
-** acuracia <- (15+15+11)/(15+15+2+1+11) =  93,18 **
+** acurácia <- (15+15+11)/(15+15+2+1+11) =  93,18 **
 
 **Percentual de acertos: 93,18 %**
 
