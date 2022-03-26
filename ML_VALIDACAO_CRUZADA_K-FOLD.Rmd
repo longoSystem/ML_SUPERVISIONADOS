@@ -1,0 +1,133 @@
+---
+title: "ML_VALIDACAO_CRUZADA_K-FOLD"
+author: "Juliano Sarnes Longo"
+date: "25/03/2022"
+output: word_document
+---
+
+## Objetivo
+O objeto deste script é mostrar como avaliar o desempenho de um modelo preditivo 
+usando Cross Validation K-Fold, uma idéia simples e muito poderosa, usada para 
+garantir que a acurácia do modelo preditivo desenvolvido é realmente eficiente, 
+ou seja, as predições resultantes geradas pelo modelo correspondem aos dados 
+observados.
+
+## Validação cruzada K-Fold ou Cross Validation K-Fold
+Como mencionado acima a validação cruzada k-fold tem como objetivo garantir que 
+o modelo desenvolvido consegue gerar previsões de forma eficiente em relação aos 
+dados da observação.
+
+A validação cruzada estende a idéia de se ter uma única amostra de retenção ou 
+teste, para múltiplas amostras de retenção sequenciais, onde o algoritmo básico 
+aplica o seguinte esquema funcional:
+
+1. Divide um conjunto de dados de forma aleatória em k agrupamentos também 
+chamado de "dobra" ou "fold", sendo que esses agrupamentos possuem aproximadamente 
+o mesmo de tamanho.
+
+2. O algoritmo escolhe UM dos agrupamentos ou "folds" para utilizar como conjunto 
+de retenção ou teste e os demais folds "k-1" são aplicados ao modelo como conjunto 
+de treinamento.
+
+3. Usa o conjunto de retenção ou teste para validar o modelo, geralmente é nessa 
+etapa que é calculado erro quadrático médio (MSE), que será usado para validação 
+do modelo.
+
+
+$$ MSE = \frac{1}{n} * \sum\,(y_i – f(x_i ))^2 $$
+Quanto menor for o valor do **MSE** mais próximas as predições estão das observações.
+
+
+4. O algoritmo repete o processo K vezes.
+
+
+## Aplicando a idéia de Validação Cruzada ou Cross Validation K-Fold usando R.
+
+Para aplicar o Cross Validation K-Fold usando a linguagem R ou criar um dataframe 
+com números inteiros.
+
+```{r}
+# criação do dataframe df.input
+df.input <- data.frame(y = c(14, 12, 12, 13, 7, 8, 7, 4, 6, 5), 
+                       x1 = c(6, 8, 12, 14, 14, 15, 17, 22, 24, 23), 
+                       x2 = c(2, 5, 4, 3, 4, 6, 7, 5, 8, 9))
+
+df.input
+```
+
+Utilizarei um modelo de **Regressão Linear Múltipla** para aplicar o conjunto de
+dados e efetuar a validação cruzada K-fold com k=5 folds e assim poder avaliar a 
+eficiência do modelo.
+
+```{r}
+library(caret)
+
+# definição do cross validation.
+controle <- trainControl(method = "cv" # método validação Cross Validation.
+                         , number = 5  # total de dobras ou folds 5.
+                        )
+
+# criação do modelo de regressão linear múltipla para avaliar a eficiência deste
+# modelo usando o Cross Validation K-Fold.
+modeloRLM <- train(
+           y ~ x1 + x2,   # formula
+           data=df.input, # dataframe
+           method = "lm", # aplica a regressão linear múltipla.
+           trControl = controle # aplica a validação cruzada no conjunto de treino.
+                  )
+
+print(modeloRLM)
+
+```
+
+## Interpretando as informações geradas pelo modelo de Regressão Linear Múltipla com Cross Validation K-Fold.
+
+1. **10 samples:** Existem 10 observações.
+2. **2 predictor:** Existem 2 variáveis preditoras.
+3. **No pre-processing:** Não ocorreu nenhum tipo de pré-processamento do conjunto 
+de dados.
+4. **Resampling: Cross-Validated (5 fold):** o método de reamostragem que foi aplicado 
+para avaliação do modelo foi o Cross Validation com 5 Folds.
+5. **Summary of sample sizes: 8, 8, 8, 8, 8:** foram criados 5 fold de tamanho 8.
+6. **Resampling results:** 
+- **RMSE:** A raiz do erro quadrático médio, mede a diferença média entre as 
+previsões feitas pelo modelo e as observações reais, quanto menor for o RMSE, mais próximo um modelo pode prever as observações reais.
+- **Rsquared:** É uma medida da correlação entre as previsões feitas pelo modelo e as observações reais, quanto maior for o R-quadrado, mais próximo um modelo pode 
+prever as observações reais.
+- **MAE:** é o erro absoluto médio, esta é a diferença média absoluta entre as 
+previsões geradas pelo modelo e as observações reais, quanto menor for o MAE 
+mais próximos um modelo pode prever as observações reais.
+
+As métricas de saída (RMSE, Rsquared e MAE) nos permite ter uma ideia de como 
+está o desempenho do modelo, geralmente ajustamos os diferentes modelos e fazemos 
+a comparação das três métricas fornecidas na saída, o modelo que produzir as 
+menores taxas de erro é o melhor modelo.
+
+
+
+```{r}
+
+# examinando o modelo final ajustado.
+modeloRLM$finalModel
+
+```
+
+## O modelo final ajustado.
+
+$$ y=17.0594-0.4446*(x_1)-0.2582(x_2) $$
+
+Visualização das predições do modelo feita em cada um dos 5 folds:
+
+```{r}
+#predição em cada fold.
+modeloRLM$resample
+```
+
+Em algumas literaturas encontramos a seguinte indicação:
+Geralmente escolha entre 5 e 10 folds, por que esse é o número ideal de folds capazes 
+de produzir taxas de erros e testes confiáveis, por oferecer um equilíbrio ideal entre 
+viés e variância.
+
+**-Page 184, An Introduction to Statistical Learning**
+
+
